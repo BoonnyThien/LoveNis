@@ -1,0 +1,10 @@
+Chức năng,Kết quả Test,Kết luận cho Dự Án
+1. useCamera,✅ OK,"Dùng để reset góc nhìn, làm animation bay camera."
+2. useRenderLoop,✅ OK,"Dùng để làm vật thể tự xoay, tính toán khoảng cách (proximity), animation."
+3. useSeek,✅ OK,"Dùng để tìm vật thể con trong model phức tạp (ví dụ tìm ""ngọn nến"" trên cái bánh)."
+4. useRaycaster,✅ OK,"Dùng cho sự kiện Click (chọn topping, chọn bánh)."
+5. usePointer,✅ OK,Dùng cho hiệu ứng Hover (rê chuột đổi màu).
+6. useRenderer,✅ OK,Bóng đổ (Shadows) hoạt động tốt. Config màu nền OK.
+7. useSizes,✅ OK,Responsive tốt (bạn đã thấy log resize).
+8. useLoader/Texture,⚠️ Chờ Test File 2 mới,"Nếu File 2 (bản fix ở trên) chạy được, bạn có thể dùng để load Model/Texture."
+9. Directives,❌ Bỏ qua,"v-rotate, v-always-look-at gây lỗi hoặc không chạy. Thay thế bằng logic trong useRenderLoop (như File 3 và File 7) -> Ổn định hơn nhiều."

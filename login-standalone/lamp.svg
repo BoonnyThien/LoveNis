@@ -1,0 +1,158 @@
+<svg class="lamp-svg" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Linen/canvas texture pattern -->
+    <pattern id="fabric-pattern" width="12" height="12" patternUnits="userSpaceOnUse">
+      <rect width="12" height="12" fill="none" />
+      <path d="M 0 3 L 12 3 M 0 9 L 12 9 M 3 0 L 3 12 M 9 0 L 9 12" stroke="rgba(255, 255, 255, 0.25)" stroke-width="1.2" />
+      <path d="M 0 6 L 12 6 M 6 0 L 6 12" stroke="rgba(0, 0, 0, 0.18)" stroke-width="1.2" />
+    </pattern>
+
+    <!-- Metallic gradients for the cord and connectors -->
+    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b89742" />
+      <stop offset="25%" stop-color="#ffd97d" />
+      <stop offset="50%" stop-color="#8c6a1c" />
+      <stop offset="75%" stop-color="#ffd97d" />
+      <stop offset="100%" stop-color="#6e5010" />
+    </linearGradient>
+
+    <!-- Lampshade shading to create a 3D rounded look -->
+    <radialGradient id="lampshadeShading" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="rgba(255, 255, 255, 0.1)" />
+      <stop offset="60%" stop-color="rgba(0, 0, 0, 0.0)" />
+      <stop offset="100%" stop-color="rgba(0, 0, 0, 0.35)" />
+    </radialGradient>
+
+    <!-- Bulb glows (only active when lamp is ON) -->
+    <radialGradient id="bulbGlowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(255, 235, 150, 1)" />
+      <stop offset="40%" stop-color="rgba(255, 200, 100, 0.6)" />
+      <stop offset="100%" stop-color="rgba(255, 200, 100, 0)" />
+    </radialGradient>
+    <radialGradient id="bulbInnerGlowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="50%" stop-color="rgba(255, 255, 255, 0.9)" />
+      <stop offset="100%" stop-color="rgba(255, 235, 150, 0)" />
+    </radialGradient>
+  </defs>
+
+  <!-- Ceiling Canopy / Mount (Static) -->
+  <path d="M 80 0 L 120 0 L 115 15 L 85 15 Z" fill="#2d2d35" />
+  
+  <!-- Swingable Lamp Assembly Group -->
+  <g id="lamp-assembly">
+    <!-- Hanging Wire -->
+    <line x1="100" y1="15" x2="100" y2="70" stroke="#2d2d35" stroke-width="3.5" />
+
+    <!-- Socket Connector -->
+    <rect x="91" y="70" width="18" height="15" rx="3" fill="#4a4a54" />
+    <rect x="88" y="80" width="24" height="6" rx="1.5" fill="url(#metalGrad)" />
+
+    <!-- Warm ambient bulb glow group behind shade & bulb -->
+    <g class="bulb-glow-group">
+      <circle cx="100" cy="172" r="55" fill="url(#bulbGlowGrad)" />
+      <circle cx="100" cy="172" r="32" fill="url(#bulbInnerGlowGrad)" />
+    </g>
+
+    <!-- Cute Lampshade Body & Rim (Character Base) -->
+    <g class="lamp-shade-group">
+      <path class="lamp-shade" d="
+        M 100 85 
+        C 75 85, 45 110, 45 140 
+        C 45 155, 35 162, 35 165 
+        L 165 165 
+        C 165 162, 155 155, 155 140 
+        C 155 110, 125 85, 100 85 Z
+      " />
+      <ellipse class="lamp-shade-rim" cx="100" cy="165" rx="65" ry="6" />
+
+      <!-- 3D Shading Overlay -->
+      <path d="
+        M 100 85 
+        C 75 85, 45 110, 45 140 
+        C 45 155, 35 162, 35 165 
+        L 165 165 
+        C 165 162, 155 155, 155 140 
+        C 155 110, 125 85, 100 85 Z
+      " fill="url(#lampshadeShading)" style="mix-blend-mode: multiply; pointer-events: none;" />
+      <ellipse cx="100" cy="165" rx="65" ry="6" fill="url(#lampshadeShading)" style="mix-blend-mode: multiply; pointer-events: none;" />
+
+      <!-- Fabric Weave Texture Overlay -->
+      <path d="
+        M 100 85 
+        C 75 85, 45 110, 45 140 
+        C 45 155, 35 162, 35 165 
+        L 165 165 
+        C 165 162, 155 155, 155 140 
+        C 155 110, 125 85, 100 85 Z
+      " fill="url(#fabric-pattern)" style="mix-blend-mode: overlay; opacity: 0.7; pointer-events: none;" />
+      <ellipse cx="100" cy="165" rx="65" ry="6" fill="url(#fabric-pattern)" style="mix-blend-mode: overlay; opacity: 0.7; pointer-events: none;" />
+    </g>
+
+    <!-- Physical Light Bulb (Semi-exposed) -->
+    <circle class="lamp-bulb" cx="100" cy="172" r="22" />
+
+    <!-- Cute Facial Expressions -->
+    <!-- Sleep state: Eyes closed (visible by default) -->
+    <g class="eyes-closed-group">
+      <path class="eye-closed" id="eye-left-closed" d="M 70 125 Q 78 133 86 125" />
+      <path class="eye-closed" id="eye-right-closed" d="M 114 125 Q 122 133 130 125" />
+    </g>
+
+    <!-- Active state: Shiny, sparkling open eyes -->
+    <g class="eyes-open-group">
+      <!-- Left Eye -->
+      <g class="eye-open-left">
+        <circle cx="78" cy="124" r="10" fill="#1a1a24" />
+        <circle class="eye-sparkle-large" cx="75.5" cy="120.5" r="3.2" fill="#ffffff" />
+        <circle class="eye-sparkle-small" cx="81.5" cy="127.5" r="1.5" fill="#ffffff" />
+      </g>
+      <!-- Right Eye -->
+      <g class="eye-open-right">
+        <circle cx="122" cy="124" r="10" fill="#1a1a24" />
+        <circle class="eye-sparkle-large" cx="119.5" cy="120.5" r="3.2" fill="#ffffff" />
+        <circle class="eye-sparkle-small" cx="125.5" cy="127.5" r="1.5" fill="#ffffff" />
+      </g>
+      <!-- Success mode: Right eye changes to a cute wink -->
+      <path class="wink-eye" d="M 114 125 Q 122 115 130 125" />
+    </g>
+
+    <!-- Glowing Blushing Cheeks -->
+    <g class="blush-cheeks">
+      <ellipse cx="64" cy="135" rx="8" ry="4.5" fill="#ff4d6d" />
+      <ellipse cx="136" cy="135" rx="8" ry="4.5" fill="#ff4d6d" />
+    </g>
+
+    <!-- Smiling mouth -->
+    <path class="mouth" d="M 93 138 Q 100 144 107 138" />
+    
+    <!-- Sticking out tongue -->
+    <path class="tongue" id="lamp-tongue" d="M 96 140 C 96 149, 104 149, 104 140 Z" />
+
+    <!-- Interactive Pull Cord -->
+    <!-- Bead chain styling using stroke-dasharray trick -->
+    <line id="pull-cord-line" x1="145" y1="165" x2="145" y2="235" stroke="#94a3b8" stroke-dasharray="0 9" stroke-width="5.5" stroke-linecap="round" />
+    
+    <!-- Realistic bead grip at end -->
+    <g id="pull-cord-knob" cursor="pointer">
+      <!-- Huge invisible circle for touch target -->
+      <circle cx="145" cy="235" r="22" fill="transparent" />
+      
+      <!-- Ribbed metallic connector -->
+      <circle cx="145" cy="227" r="4.5" fill="url(#metalGrad)" stroke="rgba(0,0,0,0.15)" stroke-width="0.5" />
+      <!-- Cylinder grip body -->
+      <rect x="139" y="230" width="12" height="20" rx="2" fill="url(#metalGrad)" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" />
+      
+      <!-- Textured rib lines -->
+      <line x1="139.5" y1="234" x2="150.5" y2="234" stroke="rgba(0,0,0,0.25)" stroke-width="0.8" />
+      <line x1="139.5" y1="238" x2="150.5" y2="238" stroke="rgba(0,0,0,0.25)" stroke-width="0.8" />
+      <line x1="139.5" y1="242" x2="150.5" y2="242" stroke="rgba(0,0,0,0.25)" stroke-width="0.8" />
+      <line x1="139.5" y1="246" x2="150.5" y2="246" stroke="rgba(0,0,0,0.25)" stroke-width="0.8" />
+
+      <!-- Flared bottom bell cap -->
+      <path d="M 137 250 L 153 250 L 150 256 L 140 256 Z" fill="url(#metalGrad)" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" />
+      <!-- Spherical bottom bead -->
+      <circle cx="145" cy="256" r="4" fill="url(#metalGrad)" stroke="rgba(0,0,0,0.2)" stroke-width="0.5" />
+    </g>
+  </g>
+</svg>

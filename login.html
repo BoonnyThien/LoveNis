@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cute Lamp Login Form</title>
+  
+  <!-- Google Fonts: Quicksand for a cute, rounded feel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- CSS DESIGN SYSTEM & VARIABLES --- */
+    :root {
+      --bg-dark: #0f0f12;
+      --bg-light-radial: radial-gradient(circle at 50% 30%, #201e26 0%, #0f0f12 70%);
+      --lamp-off: #3d3d45;
+      --lamp-on: #fff0b3;
+      --lamp-glow: rgba(255, 235, 150, 0.45);
+      --accent-color: #ff9f1c;
+      --accent-hover: #ffbf69;
+      --text-muted: #718096;
+      --text-light: #e2e8f0;
+      --font-family: 'Quicksand', sans-serif;
+      --transition-slow: 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --transition-medium: 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-dark);
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      transition: background var(--transition-slow);
+    }
+
+    /* Light On state for Body */
+    body.light-on {
+      background: var(--bg-light-radial);
+    }
+
+    /* --- LAYOUT CONTAINER --- */
+    .app-container {
+      width: 100%;
+      max-width: 900px;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      position: relative;
+    }
+
+    @media (min-width: 768px) {
+      .app-container {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-around;
+        gap: 0;
+      }
+    }
+
+    /* --- LAMP SECTION --- */
+    .lamp-section {
+      position: relative;
+      width: 280px;
+      height: 320px;
+      display: flex;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    /* Target specific components inside the Lamp SVG */
+    .lamp-svg {
+      overflow: visible;
+      width: 100%;
+      height: 100%;
+    }
+
+    .lamp-shade {
+      fill: var(--lamp-off);
+      transition: fill var(--transition-slow), filter var(--transition-slow);
+    }
+
+    .lamp-bulb {
+      fill: #55555e;
+      transition: fill var(--transition-slow), filter var(--transition-slow);
+    }
+
+    /* Face details inside Lamp Shade */
+    .eye-closed {
+      stroke: #1a1a24;
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      fill: none;
+      transition: opacity var(--transition-medium);
+      opacity: 1;
+    }
+
+    .eye-open {
+      fill: #1a1a24;
+      transition: opacity var(--transition-medium);
+      opacity: 0;
+    }
+
+    .eye-pupil {
+      fill: #ffffff;
+    }
+
+    .mouth {
+      fill: none;
+      stroke: #1a1a24;
+      stroke-width: 3;
+      stroke-linecap: round;
+      transition: d var(--transition-slow);
+    }
+
+    .tongue {
+      fill: #ff758f;
+      transform-origin: 100px 145px;
+      transition: transform var(--transition-slow);
+    }
+
+    /* Glow details when Light On */
+    body.light-on .lamp-shade {
+      fill: var(--lamp-on);
+      filter: drop-shadow(0 0 25px rgba(255, 235, 150, 0.7));
+    }
+
+    body.light-on .lamp-bulb {
+      fill: #ffffff;
+      filter: drop-shadow(0 0 15px #fff);
+    }
+
+    body.light-on .eye-closed {
+      opacity: 0;
+    }
+
+    body.light-on .eye-open {
+      opacity: 1;
+    }
+
+    body.light-on .tongue {
+      animation: tongueWiggle 0.4s infinite alternate ease-in-out;
+    }
+
+    /* Light Beam Element */
+    .light-beam {
+      opacity: 0;
+      transition: opacity var(--transition-slow);
+      pointer-events: none;
+    }
+
+    body.light-on .light-beam {
+      opacity: 1;
+    }
+
+    /* Wiggle Animation for Tongue */
+    @keyframes tongueWiggle {
+      0% { transform: rotate(-5deg) scaleY(1); }
+      100% { transform: rotate(5deg) scaleY(1.15); }
+    }
+
+    /* --- LOGIN FORM SECTION --- */
+    .form-section {
+      width: 100%;
+      max-width: 380px;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 24px;
+      padding: 35px 30px;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      opacity: 0.03;
+      transform: translateY(30px);
+      pointer-events: none;
+      transition: 
+        opacity var(--transition-slow), 
+        transform var(--transition-slow), 
+        background var(--transition-slow),
+        border var(--transition-slow),
+        box-shadow var(--transition-slow);
+    }
+
+    /* Illuminated state for Login Form */
+    body.light-on .form-section {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 0 50px rgba(255, 235, 150, 0.05);
+    }
+
+    .form-title {
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 25px;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      fill: var(--text-muted);
+      transition: fill var(--transition-medium);
+      pointer-events: none;
+    }
+
+    .form-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 14px 16px 14px 44px;
+      color: #ffffff;
+      font-family: var(--font-family);
+      font-size: 15px;
+      outline: none;
+      transition: 
+        border-color var(--transition-medium),
+        background-color var(--transition-medium),
+        box-shadow var(--transition-medium);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-input:focus {
+      border-color: var(--accent-color);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(255, 159, 28, 0.15);
+    }
+
+    .form-input:focus + .input-icon {
+      fill: var(--accent-color);
+    }
+
+    /* Submit Button styling */
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-color) 0%, #f77f00 100%);
+      border: none;
+      border-radius: 14px;
+      padding: 15px;
+      color: #0f0f12;
+      font-family: var(--font-family);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: 
+        transform var(--transition-medium),
+        box-shadow var(--transition-medium);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 159, 28, 0.4);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Hint text for off state */
+    .lamp-hint {
+      position: absolute;
+      bottom: -60px;
+      font-size: 14px;
+      color: var(--text-muted);
+      opacity: 0.8;
+      pointer-events: none;
+      animation: pulseHint 2s infinite alternate;
+      transition: opacity var(--transition-medium);
+      text-align: center;
+    }
+
+    body.light-on .lamp-hint {
+      opacity: 0;
+    }
+
+    @keyframes pulseHint {
+      0% { transform: translateY(0); opacity: 0.4; }
+      100% { transform: translateY(-4px); opacity: 0.9; }
+    }
+
+    /* Success Overlay & States */
+    .success-message {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 15px;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .success-icon {
+      width: 60px;
+      height: 60px;
+      fill: #42b883;
+    }
+
+    .success-text h3 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .success-text p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Wink eye state for success */
+    .wink-eye {
+      display: none;
+    }
+
+    body.success-mode .wink-eye {
+      display: block;
+      stroke: #1a1a24;
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    body.success-mode .eye-open-right {
+      display: none;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(15, 15, 18, 0.2);
+      border-radius: 50%;
+      border-top-color: #0f0f12;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- --- LAMP SECTION --- -->
+    <div class="lamp-section">
+      <!-- Inline SVG for the cute lamp & light beam -->
+      <svg class="lamp-svg" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg">
+        
+        <!-- Light Beam (spreads down, clipped/shaped by polygon) -->
+        <polygon class="light-beam" points="40,165 160,165 450,600 -250,600" fill="url(#lightBeamGrad)" />
+
+        <defs>
+          <!-- Gradient for the Light Beam -->
+          <linearGradient id="lightBeamGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(255, 240, 180, 0.45)" />
+            <stop offset="35%" stop-color="rgba(255, 240, 180, 0.2)" />
+            <stop offset="100%" stop-color="rgba(255, 240, 180, 0)" />
+          </linearGradient>
+        </defs>
+
+        <!-- Ceiling canopy / mount -->
+        <path d="M 80 0 L 120 0 L 115 15 L 85 15 Z" fill="#2d2d35" />
+        
+        <!-- Hanging wire -->
+        <line x1="100" y1="15" x2="100" y2="70" stroke="#2d2d35" stroke-width="3" />
+
+        <!-- Socket connector -->
+        <rect x="92" y="70" width="16" height="15" rx="3" fill="#4a4a54" />
+
+        <!-- Cute Lamp Shade (Main Character Body) -->
+        <path class="lamp-shade" d="
+          M 100 85 
+          C 75 85, 45 110, 45 140 
+          C 45 155, 35 162, 35 165 
+          L 165 165 
+          C 165 162, 155 155, 155 140 
+          C 155 110, 125 85, 100 85 Z
+        " />
+
+        <!-- Bulb inside shade -->
+        <circle class="lamp-bulb" cx="100" cy="172" r="22" />
+
+        <!-- --- CUTE FACIAL EXPRESSIONS --- -->
+        <!-- Eyes Closed (Sleeping State when Light Off) -->
+        <path class="eye-closed" id="eye-left-closed" d="M 72 125 Q 80 133 88 125" />
+        <path class="eye-closed" id="eye-right-closed" d="M 112 125 Q 120 133 128 125" />
+
+        <!-- Eyes Open (Wide State when Light On) -->
+        <g class="eye-open" id="eyes-open-group">
+          <!-- Left Eye -->
+          <circle cx="80" cy="124" r="9" />
+          <circle class="eye-pupil" cx="77.5" cy="121.5" r="3" />
+          
+          <!-- Right Eye -->
+          <circle class="eye-open-right" cx="120" cy="124" r="9" />
+          <circle class="eye-pupil" cx="117.5" cy="121.5" r="3" />
+          
+          <!-- Success Wink Eye (Replaces right eye on success) -->
+          <path class="wink-eye" d="M 112 125 Q 120 117 128 125" />
+        </g>
+
+        <!-- Mouth & Sticking Tongue -->
+        <path class="mouth" d="M 94 139 Q 100 144 106 139" />
+        <!-- Tongue: rounded shape drawn with bezier curves -->
+        <path class="tongue" id="lamp-tongue" d="M 96 141 C 96 150, 104 150, 104 141 Z" />
+
+        <!-- --- THE INTERACTIVE PULL CORD --- -->
+        <!-- The hanging line of the cord -->
+        <line id="pull-cord-line" x1="140" y1="165" x2="140" y2="235" stroke="#a0aec0" stroke-width="2.5" stroke-linecap="round" />
+        <!-- The pull knob/bell at the end -->
+        <g id="pull-cord-knob" cursor="pointer">
+          <!-- Outer glowing circle just for design -->
+          <circle cx="140" cy="235" r="14" fill="rgba(255,255,255,0.01)" />
+          <!-- Inner solid bell shape -->
+          <path d="M 134 230 L 146 230 L 143 241 L 137 241 Z" fill="#ffb703" />
+          <circle cx="140" cy="241" r="4.5" fill="#ffb703" />
+        </g>
+
+      </svg>
+
+      <!-- Ambient prompt guiding the user to drag the cord -->
+      <div class="lamp-hint">Kéo dây công tắc để bật đèn! 💡</div>
+    </div>
+
+    <!-- --- LOGIN FORM SECTION --- -->
+    <div class="form-section" id="form-container">
+      
+      <!-- Actual Login Form -->
+      <form id="login-form">
+        <h2 class="form-title">Đăng Nhập</h2>
+        
+        <!-- Username Input -->
+        <div class="input-group">
+          <input type="text" id="username" class="form-input" placeholder="Tên đăng nhập" required autocomplete="off" />
+          <!-- Custom SVG Username Icon -->
+          <svg class="input-icon" viewBox="0 0 24 24">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </div>
+
+        <!-- Password Input -->
+        <div class="input-group">
+          <input type="password" id="password" class="form-input" placeholder="Mật khẩu" required />
+          <!-- Custom SVG Lock Icon -->
+          <svg class="input-icon" viewBox="0 0 24 24">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+          </svg>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn" id="submit-btn">
+          <span id="btn-text">Đăng Nhập</span>
+          <span class="spinner" id="btn-spinner"></span>
+        </button>
+      </form>
+
+      <!-- Successful Login Message (hidden by default) -->
+      <div class="success-message" id="success-message">
+        <!-- SVG Success Checkmark -->
+        <svg class="success-icon" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="#42b883" stroke-width="2"/>
+          <path d="M8 12l3 3 5-5" fill="none" stroke="#42b883" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="success-text">
+          <h3>Thành Công!</h3>
+          <p>Chào mừng Ní đã đăng nhập! 🎉</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- --- JAVASCRIPT: SPRING PHYSICS & INTERACTIONS --- -->
+  <script>
+    const body = document.body;
+    const formContainer = document.getElementById('form-container');
+    const loginForm = document.getElementById('login-form');
+    const successMsg = document.getElementById('success-message');
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnSpinner = document.getElementById('btn-spinner');
+
+    // Cord elements
+    const cordLine = document.getElementById('pull-cord-line');
+    const cordKnob = document.getElementById('pull-cord-knob');
+
+    // --- PHYSICS CONSTANTS & VARIABLES ---
+    const targetY = 235; // Default hanging height (y2 coordinates on line, and center coordinates of knob)
+    let y = targetY;     // Current position
+    let vy = 0;          // Current velocity
+    const k = 0.12;      // Spring stiffness (lower = looser, higher = tighter)
+    const damping = 0.8; // Dampening factor (closer to 1 = bounces longer, closer to 0 = stops quickly)
+    
+    let isDragging = false;
+    let startDragY = 0;
+    let startY = targetY;
+    let dragDistance = 0;
+
+    // --- RENDER/PHYSICS LOOP ---
+    function updateSpring() {
+      if (!isDragging) {
+        // Hooke's Law: F = -k * x
+        const displacement = y - targetY;
+        const springForce = -k * displacement;
+        
+        // Acceleration = Force / Mass (assume mass = 1)
+        vy += springForce;
+        // Apply friction/damping
+        vy *= damping;
+        // Update position
+        y += vy;
+
+        // Apply updated coordinates to the SVG elements
+        cordLine.setAttribute('y2', y);
+        
+        // The knob is grouped, so we translate it relative to its origin
+        const delta = y - targetY;
+        cordKnob.setAttribute('transform', `translate(0, ${delta})`);
+
+        // If the spring is still vibrating significantly, keep the loop running
+        if (Math.abs(vy) > 0.05 || Math.abs(displacement) > 0.05) {
+          requestAnimationFrame(updateSpring);
+        } else {
+          // Snap precisely back to rest position
+          y = targetY;
+          vy = 0;
+          cordLine.setAttribute('y2', targetY);
+          cordKnob.setAttribute('transform', 'translate(0, 0)');
+        }
+      }
+    }
+
+    // --- STATE MANAGEMENT ---
+    function toggleLight() {
+      const isCurrentlyOn = body.classList.contains('light-on');
+      
+      // Toggle CSS class
+      body.classList.toggle('light-on');
+      
+      // Play a quick audio clicking cue (synthesized via Web Audio API - 100% code!)
+      playClickSound();
+    }
+
+    // Synthesis of a realistic mechanical pull switch click using Web Audio API
+    function playClickSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // High frequency transient (the mechanical snap)
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
+        
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch (err) {
+        // Fallback if AudioContext is blocked by browser policies
+      }
+    }
+
+    // --- DRAG EVENT HANDLERS ---
+    function onStartDrag(e) {
+      isDragging = true;
+      dragDistance = 0;
+      startDragY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+      startY = y;
+
+      // Prevent scrolling / selection on mouse drags
+      if (e.type === 'mousedown') {
+        e.preventDefault();
+      }
+
+      window.addEventListener('mousemove', onDrag);
+      window.addEventListener('touchmove', onDrag, { passive: false });
+      window.addEventListener('mouseup', onEndDrag);
+      window.addEventListener('touchend', onEndDrag);
+    }
+
+    function onDrag(e) {
+      if (!isDragging) return;
+      
+      const currentClientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+      const deltaY = currentClientY - startDragY;
+      dragDistance = Math.abs(deltaY);
+
+      let newY = startY + deltaY;
+
+      // Restrict movement: cannot push upward, and set a hard elastic cap downward
+      if (newY < targetY) {
+        newY = targetY;
+      }
+      if (newY > targetY + 70) {
+        newY = targetY + 70; // Hard stop at 70px drag
+      }
+
+      y = newY;
+      cordLine.setAttribute('y2', y);
+      
+      const delta = y - targetY;
+      cordKnob.setAttribute('transform', `translate(0, ${delta})`);
+
+      // Prevent window scroll while dragging on mobile touchscreens
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+    }
+
+    function onEndDrag() {
+      if (!isDragging) return;
+      isDragging = false;
+
+      window.removeEventListener('mousemove', onDrag);
+      window.removeEventListener('touchmove', onDrag);
+      window.removeEventListener('mouseup', onEndDrag);
+      window.removeEventListener('touchend', onEndDrag);
+
+      // Threshold check: if dragged down > 20px, OR if it was a quick click tap
+      if ((y - targetY) > 20 || dragDistance < 4) {
+        // If it was a quick click, inject a downward starting velocity to animate the pull
+        if (dragDistance < 4) {
+          vy = 28;
+        } else {
+          vy = 0; // Release from current stretched position
+        }
+        toggleLight();
+      }
+
+      // Launch physics loop to bounce the cord back
+      requestAnimationFrame(updateSpring);
+    }
+
+    // Bind event listeners to pull cord knob
+    cordKnob.addEventListener('mousedown', onStartDrag);
+    cordKnob.addEventListener('touchstart', onStartDrag, { passive: false });
+
+    // Support a direct click on the cord
+    cordKnob.addEventListener('click', (e) => {
+      // Direct click handles in endDrag using dragDistance check, but keeping click listener as a fallback
+      if (dragDistance < 4 && vy === 0) {
+        vy = 28;
+        toggleLight();
+        requestAnimationFrame(updateSpring);
+      }
+    });
+
+    // --- LOGIN FORM MICRO-INTERACTION ---
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // Visual feedback: disable button & show spinner
+      submitBtn.disabled = true;
+      btnText.style.display = 'none';
+      btnSpinner.style.display = 'inline-block';
+
+      // Simulate API network latency
+      setTimeout(() => {
+        // Hide Form inputs, display Success message
+        loginForm.style.display = 'none';
+        successMsg.style.display = 'flex';
+
+        // Trigger Success Mode on Body: changes face of the lamp to WINK
+        body.classList.add('success-mode');
+        
+        // Make the lamp bounce up in joy!
+        vy = -35; 
+        requestAnimationFrame(updateSpring);
+      }, 1200);
+    });
+  </script>
+
+</body>
+</html>

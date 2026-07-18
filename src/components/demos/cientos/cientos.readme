@@ -1,0 +1,14 @@
+Module: Game Trang Trí Bánh (Interactive)
+TestTransformControls.vue: Để user cầm nến, dâu tây đặt lên bánh.
+TestScreenshot.vue: Để user lưu lại tác phẩm.
+TestStaging.vue (Sparkles): Hiệu ứng khi hoàn thành trang trí.
+2. Module: Trưng Bày Sản Phẩm (Showcase)
+TestReflector.vue: Làm nền sàn gương sang trọng.
+TestCameraControls.vue: Để chuyển góc nhìn (Zoom chi tiết kem, nhìn tổng thể).
+TestUI.vue: Hiển thị giá tiền và tên bánh.
+TestMaterials.vue: Làm ly nước hoặc lồng kính đậy bánh.
+TestShadows.vue: Để bánh trông thật hơn.
+3. Module: Trải Nghiệm & Môi Trường
+TestAudio.vue: Nhạc nền chill.
+TestWeather.vue: Hiệu ứng tuyết rơi mùa đông.
+TestParallax.vue: Hiệu ứng trang chủ.
