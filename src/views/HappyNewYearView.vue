@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { trackVisitor, trackCardClick } from '@/utils/analytics'
+
+const confettiContainer = ref<HTMLElement | null>(null)
+let animationFrameId: number | null = null
 
 // Confetti logic
 const initConfetti = () => {
+  if (!confettiContainer.value) return
   const colors = ['#ff6699', '#ffcc66', '#66ffcc', '#66ccff', '#ff66cc']
   const shapes = ['circle', 'star', 'heart']
 
@@ -18,7 +22,7 @@ const initConfetti = () => {
     confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]
     confetti.style.animationDuration = (2 + Math.random() * 3) + 's'
     confetti.style.width = confetti.style.height = (5 + Math.random() * 10) + 'px'
-    document.body.appendChild(confetti)
+    confettiContainer.value.appendChild(confetti)
   }
 }
 
@@ -55,11 +59,13 @@ const inithorse = () => {
       heart.style.top = (horseRect.top + 30) + 'px'
       
       heart.textContent = '❤️'
-      document.body.appendChild(heart)
+      if (confettiContainer.value) {
+        confettiContainer.value.appendChild(heart)
+      }
       // Remove heart after animation
       setTimeout(() => heart.remove(), 4000)
     }
-    requestAnimationFrame(animatehorse)
+    animationFrameId = requestAnimationFrame(animatehorse)
   }
 
   animatehorse()
@@ -121,10 +127,17 @@ onMounted(() => {
   initConfetti()
   inithorse()
 })
+
+onUnmounted(() => {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId)
+  }
+})
 </script>
 
 <template>
   <div class="app-container">
+    <div class="confetti-container" ref="confettiContainer"></div>
     <header>
       Happy Lunar New Year
     </header>

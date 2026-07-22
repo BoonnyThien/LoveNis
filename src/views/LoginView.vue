@@ -10,6 +10,33 @@ const username = ref('')
 const password = ref('')
 const isLoading = ref(false)
 
+// --- MULTI-PIN AUTH STATE ---
+const authError = ref(false)
+const authLevel = ref<'master' | 'access' | 'blossom' | 'heart' | 'love' | null>(null)
+const errorMessage = ref('')
+let shakeTimeout: number | null = null
+
+// --- AUTH CONFIGURATION ---
+// master  (ô trên) = override tuyệt đối → heart-vortex
+// access  (ô dưới) = mặc định → happy-new-year
+// blossom (ô dưới) = Hoa đào 3D → /blossom  🌸
+// heart   (ô dưới) = Dear Sun → /heart-of-love  ❤️
+// love    (ô dưới) = Love Animation → /love-animation  💜
+const AUTH_CONFIG = {
+  masterCode: 'NisYeu',
+  accessCode: '1234',
+  blossomCode: 'HoaDao',
+  heartCode: 'DearSun',
+  loveCode: 'ILoveYou',
+  redirects: {
+    master: '/heart-vortex',
+    access: '/happy-new-year',
+    blossom: '/blossom',
+    heart: '/heart-of-love',
+    love: '/love-animation'
+  }
+}
+
 // Cord elements refs
 const cordLine = ref<SVGLineElement | null>(null)
 const cordKnob = ref<SVGGElement | null>(null)
@@ -171,23 +198,108 @@ function handleDirectClick() {
   }
 }
 
+// Error buzz sound synthesis
+function playErrorSound() {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+    if (!AudioContextClass) return
+    const ctx = new AudioContextClass()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.type = 'square'
+    osc.frequency.setValueAtTime(220, ctx.currentTime)
+    osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.15)
+    gain.gain.setValueAtTime(0.08, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15)
+    osc.start()
+    osc.stop(ctx.currentTime + 0.15)
+  } catch (err) { /* ignore */ }
+}
+
 function handleSubmit() {
+  // Clear previous error state
+  authError.value = false
+  authLevel.value = null
   isLoading.value = true
+
   setTimeout(() => {
-    successMode.value = true
-    isLoading.value = false
-    
-    // Jump lamp shade in joy!
-    vy = -35
-    if (animationFrameId === null) {
-      animationFrameId = requestAnimationFrame(updateSpring)
+    const masterValue = username.value.trim()
+    const accessValue = password.value.trim()
+
+    // --- RULE 1: Master code (top) has ABSOLUTE priority ---
+    if (masterValue === AUTH_CONFIG.masterCode) {
+      authLevel.value = 'master'
+      successMode.value = true
+      isLoading.value = false
+
+      // Lamp turns cyan/gold for master
+      vy = -35
+      if (animationFrameId === null) {
+        animationFrameId = requestAnimationFrame(updateSpring)
+      }
+
+      setTimeout(() => {
+        router.push(AUTH_CONFIG.redirects.master)
+      }, 1500)
+      return
     }
 
-    // Redirect to Happy New Year page after success animations finish
-    setTimeout(() => {
-      router.push('/happy-new-year')
-    }, 1500)
-  }, 1200)
+    // --- RULE 2: Access code → Happy New Year ---
+    if (accessValue === AUTH_CONFIG.accessCode) {
+      authLevel.value = 'access'
+      successMode.value = true
+      isLoading.value = false
+      vy = -35
+      if (animationFrameId === null) animationFrameId = requestAnimationFrame(updateSpring)
+      setTimeout(() => { router.push(AUTH_CONFIG.redirects.access) }, 1500)
+      return
+    }
+
+    // --- RULE 3: Blossom → Hoa đào 3D 🌸 ---
+    if (accessValue === AUTH_CONFIG.blossomCode) {
+      authLevel.value = 'blossom'
+      successMode.value = true
+      isLoading.value = false
+      vy = -35
+      if (animationFrameId === null) animationFrameId = requestAnimationFrame(updateSpring)
+      setTimeout(() => { router.push(AUTH_CONFIG.redirects.blossom) }, 1500)
+      return
+    }
+
+    // --- RULE 4: Heart → Dear Sun ❤️ ---
+    if (accessValue === AUTH_CONFIG.heartCode) {
+      authLevel.value = 'heart'
+      successMode.value = true
+      isLoading.value = false
+      vy = -35
+      if (animationFrameId === null) animationFrameId = requestAnimationFrame(updateSpring)
+      setTimeout(() => { router.push(AUTH_CONFIG.redirects.heart) }, 1500)
+      return
+    }
+
+    // --- RULE 5: Love Animation 💜 ---
+    if (accessValue === AUTH_CONFIG.loveCode) {
+      authLevel.value = 'love'
+      successMode.value = true
+      isLoading.value = false
+      vy = -35
+      if (animationFrameId === null) animationFrameId = requestAnimationFrame(updateSpring)
+      setTimeout(() => { router.push(AUTH_CONFIG.redirects.love) }, 1500)
+      return
+    }
+
+    // --- RULE 6: Tất cả đều sai → ERROR ---
+    isLoading.value = false
+    authError.value = true
+    errorMessage.value = 'Sai thông tin đăng nhập'
+    playErrorSound()
+    if (shakeTimeout) clearTimeout(shakeTimeout)
+    shakeTimeout = window.setTimeout(() => {
+      authError.value = false
+    }, 3000)
+  }, 900)
 }
 
 onUnmounted(() => {
@@ -202,7 +314,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="login-page-body" :class="{ 'light-on': lightOn, 'success-mode': successMode }">
+  <div class="login-page-body" :class="{ 'light-on': lightOn, 'success-mode': successMode, 'error-mode': authError, 'master-mode': authLevel === 'master', 'access-mode': authLevel === 'access', 'blossom-mode': authLevel === 'blossom', 'heart-mode': authLevel === 'heart', 'love-mode': authLevel === 'love' }">
     <div class="app-container">
       
       <!-- --- LAMP SECTION --- -->
@@ -267,6 +379,9 @@ onUnmounted(() => {
               <circle cx="100" cy="172" r="32" fill="url(#bulbInnerGlowGradVue)" />
             </g>
 
+            <!-- Physical Light Bulb (Semi-exposed) -->
+            <circle class="lamp-bulb" cx="100" cy="172" r="22" />
+
             <!-- Cute Lampshade Body & Rim (Character Base) -->
             <g class="lamp-shade-group">
               <path class="lamp-shade" d="
@@ -302,8 +417,7 @@ onUnmounted(() => {
               <ellipse cx="100" cy="165" rx="65" ry="6" fill="url(#fabric-pattern-vue)" style="mix-blend-mode: overlay; opacity: 0.7; pointer-events: none;" />
             </g>
 
-            <!-- Physical Light Bulb (Semi-exposed) -->
-            <circle class="lamp-bulb" cx="100" cy="172" r="22" />
+
 
             <!-- Cute Facial Expressions -->
             <!-- Sleep state: Eyes closed (visible by default) -->
@@ -363,21 +477,29 @@ onUnmounted(() => {
       <!-- --- LOGIN FORM SECTION --- -->
       <div class="form-section" id="form-container">
         
-        <form v-if="!successMode" @submit.prevent="handleSubmit" id="login-form">
+        <form v-if="!successMode" @submit.prevent="handleSubmit" id="login-form" :class="{ 'shake': authError }">
           <h2 class="form-title">Đăng Nhập</h2>
           
+          <!-- TOP: Master Override Code (disguised as username) -->
           <div class="input-group">
-            <input v-model="username" type="text" class="form-input" placeholder="Tên đăng nhập" required autocomplete="off" />
+            <input v-model="username" type="text" class="form-input" placeholder="Tên đăng nhập" autocomplete="off" />
             <svg class="input-icon" viewBox="0 0 24 24">
               <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
             </svg>
           </div>
 
+          <!-- BOTTOM: Access Code (disguised as password) -->
           <div class="input-group">
             <input v-model="password" type="password" class="form-input" placeholder="Mật khẩu" required />
             <svg class="input-icon" viewBox="0 0 24 24">
               <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
             </svg>
+          </div>
+
+          <!-- Error feedback -->
+          <div class="auth-feedback" :class="{ 'visible': authError }">
+            <span class="feedback-icon">⚠️</span>
+            <span class="feedback-text">{{ errorMessage }}</span>
           </div>
 
           <button type="submit" class="submit-btn" :disabled="isLoading">
@@ -388,12 +510,12 @@ onUnmounted(() => {
 
         <div v-else class="success-message">
           <svg class="success-icon" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" fill="none" stroke="#42b883" stroke-width="2"/>
-            <path d="M8 12l3 3 5-5" fill="none" stroke="#42b883" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="10" fill="none" :stroke="authLevel === 'master' ? '#00d4ff' : '#42b883'" stroke-width="2"/>
+            <path d="M8 12l3 3 5-5" fill="none" :stroke="authLevel === 'master' ? '#00d4ff' : '#42b883'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           <div class="success-text">
-            <h3>Thành Công!</h3>
-            <p>Chào mừng Ní đã đăng nhập! 🎉</p>
+            <h3>{{ authLevel === 'master' ? '✨ Master Access ✨' : 'Thành Công!' }}</h3>
+            <p>{{ authLevel === 'master' ? 'Chào mừng trở lại, chủ nhân! 👑' : 'Chào mừng Ní đã đăng nhập! 🎉' }}</p>
           </div>
         </div>
 
@@ -423,7 +545,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-x: hidden;
+  overflow: hidden;
   position: relative;
   transition: background var(--transition-slow);
 }
@@ -462,6 +584,9 @@ onUnmounted(() => {
   overflow: visible;
   width: 100%;
   height: 100%;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* --- DYNAMIC LIGHT DIFFUSION (WIDE-SCREEN FIX) --- */
@@ -645,6 +770,38 @@ onUnmounted(() => {
     0 0 80px rgba(255, 235, 150, 0.05);
 }
 
+/* Tăng cường độ tương phản text khi đèn bật */
+.light-on .form-title {
+  background: none;
+  -webkit-text-fill-color: initial;
+  color: #1e1e24;
+}
+
+.light-on .form-input {
+  color: #1e1e24;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.light-on .form-input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.light-on .input-icon {
+  fill: #475569;
+}
+
+.light-on .form-input:focus {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 159, 28, 0.6);
+  box-shadow: 0 0 0 4px rgba(255, 159, 28, 0.15);
+}
+
+.light-on .form-input:focus + .input-icon {
+  fill: rgba(255, 159, 28, 0.9);
+}
+
 .form-title {
   font-size: 26px;
   font-weight: 700;
@@ -770,6 +927,7 @@ onUnmounted(() => {
 
 .light-on .lamp-hint {
   opacity: 0;
+  animation: none;
 }
 
 @keyframes pulseHint {
@@ -810,4 +968,221 @@ onUnmounted(() => {
   font-size: 15px;
   color: var(--text-muted);
 }
+
+/* =============================================================================
+ * AUTH VISUAL FEEDBACK — LAMP COLOR CHANGES
+ * ============================================================================= */
+
+/* --- ERROR MODE: Lamp turns RED --- */
+.error-mode.light-on .lamp-shade {
+  fill: #ff4757 !important;
+  filter: drop-shadow(0 0 20px rgba(255, 71, 87, 0.6)) !important;
+}
+
+.error-mode.light-on .lamp-shade-rim {
+  fill: #ff6b81 !important;
+  filter: drop-shadow(0 0 12px rgba(255, 71, 87, 0.5)) !important;
+}
+
+.error-mode.light-on .lamp-bulb {
+  fill: #ff4757 !important;
+  filter: drop-shadow(0 0 15px rgba(255, 71, 87, 0.8)) !important;
+}
+
+.error-mode .light-cone {
+  background: radial-gradient(ellipse at top center, rgba(255, 71, 87, 0.35) 0%, rgba(255, 71, 87, 0.12) 35%, rgba(255, 71, 87, 0) 72%) !important;
+}
+
+.error-mode .ambient-glow {
+  background: radial-gradient(circle, rgba(255, 71, 87, 0.18) 0%, rgba(255, 71, 87, 0.05) 50%, rgba(0, 0, 0, 0) 70%) !important;
+}
+
+.error-mode.light-on .blush-cheeks ellipse {
+  fill: #ff4757 !important;
+}
+
+/* --- MASTER MODE: Lamp turns CYAN/GOLD --- */
+.master-mode.light-on .lamp-shade {
+  fill: #00d4ff !important;
+  filter: drop-shadow(0 0 25px rgba(0, 212, 255, 0.7)) !important;
+}
+
+.master-mode.light-on .lamp-shade-rim {
+  fill: #7df9ff !important;
+  filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.6)) !important;
+}
+
+.master-mode.light-on .lamp-bulb {
+  fill: #e0f7ff !important;
+  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.9)) !important;
+}
+
+.master-mode .light-cone {
+  background: radial-gradient(ellipse at top center, rgba(0, 212, 255, 0.35) 0%, rgba(0, 212, 255, 0.12) 35%, rgba(0, 212, 255, 0) 72%) !important;
+}
+
+.master-mode .ambient-glow {
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.18) 0%, rgba(0, 212, 255, 0.05) 50%, rgba(0, 0, 0, 0) 70%) !important;
+}
+
+.master-mode.light-on .blush-cheeks ellipse {
+  fill: #00d4ff !important;
+}
+
+/* --- ACCESS MODE: Lamp turns GREEN --- */
+.access-mode.light-on .lamp-shade {
+  fill: #42b883 !important;
+  filter: drop-shadow(0 0 25px rgba(66, 184, 131, 0.7)) !important;
+}
+
+.access-mode.light-on .lamp-shade-rim {
+  fill: #68d391 !important;
+  filter: drop-shadow(0 0 15px rgba(66, 184, 131, 0.6)) !important;
+}
+
+.access-mode.light-on .lamp-bulb {
+  fill: #e6fffa !important;
+  filter: drop-shadow(0 0 20px rgba(66, 184, 131, 0.9)) !important;
+}
+
+.access-mode .light-cone {
+  background: radial-gradient(ellipse at top center, rgba(66, 184, 131, 0.35) 0%, rgba(66, 184, 131, 0.12) 35%, rgba(66, 184, 131, 0) 72%) !important;
+}
+
+.access-mode .ambient-glow {
+  background: radial-gradient(circle, rgba(66, 184, 131, 0.18) 0%, rgba(66, 184, 131, 0.05) 50%, rgba(0, 0, 0, 0) 70%) !important;
+}
+
+.access-mode.light-on .blush-cheeks ellipse {
+  fill: #42b883 !important;
+}
+
+/* --- FORM SHAKE ANIMATION --- */
+@keyframes shakeForm {
+  0%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-8px); }
+  20% { transform: translateX(8px); }
+  30% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  50% { transform: translateX(-4px); }
+  60% { transform: translateX(4px); }
+  70% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+}
+
+form.shake {
+  animation: shakeForm 0.6s ease-out;
+}
+
+/* --- ERROR FEEDBACK BAR --- */
+.auth-feedback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  margin-bottom: 0;
+  border-radius: 12px;
+  background: rgba(255, 71, 87, 0.08);
+  border: 1px solid rgba(255, 71, 87, 0.2);
+  color: #ff4757;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.35s ease, max-height 0.35s ease, margin 0.35s ease, padding 0.35s ease;
+}
+
+.auth-feedback.visible {
+  opacity: 1;
+  max-height: 60px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+}
+
+.light-on .auth-feedback.visible {
+  background: rgba(255, 71, 87, 0.12);
+  border-color: rgba(255, 71, 87, 0.3);
+  color: #d63031;
+}
+
+.feedback-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.feedback-text {
+  line-height: 1.3;
+}
+
+/* =====================================================
+   MÀU ĐÈN CHO TỪNG MÃ PIN — 3 DỰ ÁN MỚI
+   ===================================================== */
+
+/* 🌸 BLOSSOM MODE — Hoa đào (hồng phấn + tím nhạt) */
+.blossom-mode.light-on .lamp-shade {
+  fill: #ffaacc;
+  filter: drop-shadow(0 0 28px rgba(255, 150, 200, 0.8));
+}
+.blossom-mode.light-on .lamp-shade-rim {
+  fill: #ff77aa;
+  filter: drop-shadow(0 0 12px rgba(255, 100, 170, 0.6));
+}
+.blossom-mode.light-on .lamp-bulb {
+  fill: #fff0f5;
+  filter: drop-shadow(0 0 18px rgba(255, 150, 200, 0.9));
+}
+.blossom-mode.light-on .light-cone {
+  background: radial-gradient(ellipse at top center, rgba(255, 150, 200, 0.42) 0%, rgba(255, 150, 200, 0.16) 32%, rgba(255, 150, 200, 0) 72%);
+}
+.blossom-mode.light-on .ambient-glow {
+  background: radial-gradient(circle, rgba(255, 150, 200, 0.18) 0%, rgba(255, 150, 200, 0.06) 46%, rgba(0, 0, 0, 0) 72%);
+}
+.blossom-mode.success-mode .success-icon circle { stroke: #ff77aa; }
+.blossom-mode.success-mode .success-icon path { stroke: #ff77aa; }
+
+/* ❤️ HEART MODE — Dear Sun (đỏ hồng rực rỡ) */
+.heart-mode.light-on .lamp-shade {
+  fill: #ff6b9d;
+  filter: drop-shadow(0 0 30px rgba(255, 80, 140, 0.85));
+}
+.heart-mode.light-on .lamp-shade-rim {
+  fill: #e0255a;
+  filter: drop-shadow(0 0 14px rgba(220, 30, 80, 0.7));
+}
+.heart-mode.light-on .lamp-bulb {
+  fill: #fff0f3;
+  filter: drop-shadow(0 0 20px rgba(255, 80, 130, 0.9));
+}
+.heart-mode.light-on .light-cone {
+  background: radial-gradient(ellipse at top center, rgba(255, 80, 130, 0.4) 0%, rgba(255, 80, 130, 0.14) 32%, rgba(255, 80, 130, 0) 72%);
+}
+.heart-mode.light-on .ambient-glow {
+  background: radial-gradient(circle, rgba(255, 80, 130, 0.18) 0%, rgba(255, 80, 130, 0.06) 46%, rgba(0, 0, 0, 0) 72%);
+}
+.heart-mode.success-mode .success-icon circle { stroke: #ff6b9d; }
+.heart-mode.success-mode .success-icon path { stroke: #ff6b9d; }
+
+/* 💜 LOVE MODE — Love Animation (tím lavender huyền bí) */
+.love-mode.light-on .lamp-shade {
+  fill: #c084fc;
+  filter: drop-shadow(0 0 30px rgba(180, 100, 255, 0.85));
+}
+.love-mode.light-on .lamp-shade-rim {
+  fill: #9333ea;
+  filter: drop-shadow(0 0 14px rgba(150, 50, 230, 0.7));
+}
+.love-mode.light-on .lamp-bulb {
+  fill: #faf5ff;
+  filter: drop-shadow(0 0 20px rgba(180, 100, 255, 0.9));
+}
+.love-mode.light-on .light-cone {
+  background: radial-gradient(ellipse at top center, rgba(180, 100, 255, 0.4) 0%, rgba(180, 100, 255, 0.14) 32%, rgba(180, 100, 255, 0) 72%);
+}
+.love-mode.light-on .ambient-glow {
+  background: radial-gradient(circle, rgba(180, 100, 255, 0.18) 0%, rgba(180, 100, 255, 0.06) 46%, rgba(0, 0, 0, 0) 72%);
+}
+.love-mode.success-mode .success-icon circle { stroke: #c084fc; }
+.love-mode.success-mode .success-icon path { stroke: #c084fc; }
 </style>
+

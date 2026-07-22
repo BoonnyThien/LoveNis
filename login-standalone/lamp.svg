@@ -54,6 +54,9 @@
       <circle cx="100" cy="172" r="32" fill="url(#bulbInnerGlowGrad)" />
     </g>
 
+    <!-- Physical Light Bulb (Semi-exposed) -->
+    <circle class="lamp-bulb" cx="100" cy="172" r="22" />
+
     <!-- Cute Lampshade Body & Rim (Character Base) -->
     <g class="lamp-shade-group">
       <path class="lamp-shade" d="
@@ -89,8 +92,7 @@
       <ellipse cx="100" cy="165" rx="65" ry="6" fill="url(#fabric-pattern)" style="mix-blend-mode: overlay; opacity: 0.7; pointer-events: none;" />
     </g>
 
-    <!-- Physical Light Bulb (Semi-exposed) -->
-    <circle class="lamp-bulb" cx="100" cy="172" r="22" />
+
 
     <!-- Cute Facial Expressions -->
     <!-- Sleep state: Eyes closed (visible by default) -->
