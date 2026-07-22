@@ -8,6 +8,7 @@ import HeartVortexView from '../views/HeartVortexView.vue'
 import BlossomView from '../views/BlossomView.vue'
 import HeartOfLoveView from '../views/HeartOfLoveView.vue'
 import LoveAnimationView from '../views/LoveAnimationView.vue'
+import MemoryVaultView from '../views/MemoryVaultView.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,6 +21,11 @@ const router = createRouter({
             path: '/login',
             name: 'login',
             component: LoginView
+        },
+        {
+            path: '/vault',
+            name: 'vault',
+            component: MemoryVaultView
         },
         {
             path: '/happy-new-year',

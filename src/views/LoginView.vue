@@ -12,7 +12,7 @@ const isLoading = ref(false)
 
 // --- MULTI-PIN AUTH STATE ---
 const authError = ref(false)
-const authLevel = ref<'master' | 'access' | 'blossom' | 'heart' | 'love' | null>(null)
+const authLevel = ref<'vault' | 'master' | 'access' | 'blossom' | 'heart' | 'love' | null>(null)
 const errorMessage = ref('')
 let shakeTimeout: number | null = null
 
@@ -23,12 +23,14 @@ let shakeTimeout: number | null = null
 // heart   (ô dưới) = Dear Sun → /heart-of-love  ❤️
 // love    (ô dưới) = Love Animation → /love-animation  💜
 const AUTH_CONFIG = {
+  vaultCode: '52013',
   masterCode: 'NisYeu',
   accessCode: '1234',
   blossomCode: 'HoaDao',
   heartCode: 'DearSun',
   loveCode: 'ILoveYou',
   redirects: {
+    vault: '/vault',
     master: '/heart-vortex',
     access: '/happy-new-year',
     blossom: '/blossom',
@@ -257,6 +259,17 @@ function handleSubmit() {
       return
     }
 
+    // --- RULE NEW: Vault Code → Memory Vault ---
+    if (accessValue === AUTH_CONFIG.vaultCode) {
+      authLevel.value = 'vault'
+      successMode.value = true
+      isLoading.value = false
+      vy = -35
+      if (animationFrameId === null) animationFrameId = requestAnimationFrame(updateSpring)
+      setTimeout(() => { router.push(AUTH_CONFIG.redirects.vault) }, 1500)
+      return
+    }
+
     // --- RULE 3: Blossom → Hoa đào 3D 🌸 ---
     if (accessValue === AUTH_CONFIG.blossomCode) {
       authLevel.value = 'blossom'
@@ -314,7 +327,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="login-page-body" :class="{ 'light-on': lightOn, 'success-mode': successMode, 'error-mode': authError, 'master-mode': authLevel === 'master', 'access-mode': authLevel === 'access', 'blossom-mode': authLevel === 'blossom', 'heart-mode': authLevel === 'heart', 'love-mode': authLevel === 'love' }">
+  <div class="login-page-body" :class="{ 'light-on': lightOn, 'success-mode': successMode, 'error-mode': authError, 'vault-mode': authLevel === 'vault', 'master-mode': authLevel === 'master', 'access-mode': authLevel === 'access', 'blossom-mode': authLevel === 'blossom', 'heart-mode': authLevel === 'heart', 'love-mode': authLevel === 'love' }">
     <div class="app-container">
       
       <!-- --- LAMP SECTION --- -->
@@ -510,12 +523,12 @@ onUnmounted(() => {
 
         <div v-else class="success-message">
           <svg class="success-icon" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" fill="none" :stroke="authLevel === 'master' ? '#00d4ff' : '#42b883'" stroke-width="2"/>
-            <path d="M8 12l3 3 5-5" fill="none" :stroke="authLevel === 'master' ? '#00d4ff' : '#42b883'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="10" fill="none" :stroke="authLevel === 'master' ? '#00d4ff' : '#d49a2a'" stroke-width="2"/>
+            <path d="M8 12l3 3 5-5" fill="none" :stroke="authLevel === 'master' ? '#00d4ff' : '#d49a2a'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           <div class="success-text">
             <h3>{{ authLevel === 'master' ? '✨ Master Access ✨' : 'Thành Công!' }}</h3>
-            <p>{{ authLevel === 'master' ? 'Chào mừng trở lại, chủ nhân! 👑' : 'Chào mừng Ní đã đăng nhập! 🎉' }}</p>
+            <p>{{ authLevel === 'master' ? 'Chào mừng trở lại, chủ nhân! 👑' : (authLevel === 'vault' ? 'Khởi động Memory Vault...' : 'Chào mừng Ní đã đăng nhập! 🎉') }}</p>
           </div>
         </div>
 
@@ -560,24 +573,38 @@ onUnmounted(() => {
   grid-template-rows: auto auto;
   justify-items: center;
   align-content: center;
-  gap: 20px;
+  gap: 15px;
   width: 100%;
   max-width: 440px;
   min-height: 100vh;
   margin: 0 auto;
-  padding: 30px 24px;
+  padding: 20px 16px;
   position: relative;
   z-index: 5;
+}
+
+@media (max-width: 480px) {
+  .app-container {
+    gap: 10px;
+    padding: 10px;
+  }
 }
 
 /* --- LAMP CONTAINER --- */
 .lamp-section {
   position: relative;
-  width: 280px;
-  height: 300px;
+  width: 260px;
+  height: 280px;
   display: flex;
   justify-content: center;
   z-index: 10;
+}
+
+@media (max-width: 480px) {
+  .lamp-section {
+    width: 220px;
+    height: 240px;
+  }
 }
 
 .lamp-svg {
@@ -755,47 +782,54 @@ onUnmounted(() => {
     box-shadow var(--transition-slow);
 }
 
+@media (max-width: 480px) {
+  .form-section {
+    padding: 24px 20px;
+  }
+}
+
 .light-on .form-section {
   opacity: 1;
   transform: translateY(0);
   pointer-events: all;
-  background: rgba(255, 255, 255, 0.045);
+  background: #ffffff; /* Nền trắng như yêu cầu */
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 217, 125, 0.4);
   box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.15),
-    inset 0 -1px 3px rgba(0, 0, 0, 0.4),
-    0 24px 50px rgba(0, 0, 0, 0.45),
-    0 0 80px rgba(255, 235, 150, 0.05);
+    0 8px 32px rgba(140, 106, 28, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.5);
 }
 
 /* Tăng cường độ tương phản text khi đèn bật */
 .light-on .form-title {
   background: none;
   -webkit-text-fill-color: initial;
-  color: #1e1e24;
+  color: #6e5010; /* Tông đậm tương ứng với ánh đèn */
+  font-weight: 800;
 }
 
 .light-on .form-input {
-  color: #1e1e24;
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(0, 0, 0, 0.15);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  color: #6e5010;
+  font-weight: 600;
+  background: rgba(255, 217, 125, 0.1);
+  border: 1px solid rgba(140, 106, 28, 0.3);
+  box-shadow: none;
 }
 
 .light-on .form-input::placeholder {
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(140, 106, 28, 0.5);
+  font-weight: normal;
 }
 
 .light-on .input-icon {
-  fill: #475569;
+  fill: #8c6a1c;
 }
 
 .light-on .form-input:focus {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 159, 28, 0.6);
-  box-shadow: 0 0 0 4px rgba(255, 159, 28, 0.15);
+  background: rgba(255, 217, 125, 0.2);
+  border-color: #8c6a1c;
+  box-shadow: 0 0 0 4px rgba(140, 106, 28, 0.1);
 }
 
 .light-on .form-input:focus + .input-icon {

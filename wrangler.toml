@@ -1,11 +1,35 @@
-# wrangler.toml
-name = 'merrychristmasnis'
-compatibility_date = "2024-05-01"
+# wrangler.toml — LoveNis Memory Vault
+# Project: lovenis.pages.dev
+name = 'lovenis'
+compatibility_date = "2024-09-23"
 pages_build_output_dir = "dist"
 
+# ─────────────────────────────────────────────────────────────────
+# D1 #1 — Analytics tracking (kế thừa từ dự án cũ, chỉ đọc/ghi analytics)
+# ─────────────────────────────────────────────────────────────────
 [[d1_databases]]
 binding = "DB"
 database_name = "merrychristmas-analytics-db"
 database_id = "399aa4f5-f9be-4eae-96fa-f48ae16f6324"
 
+# ─────────────────────────────────────────────────────────────────
+# D1 #2 — LoveNis Memory Vault (memories, media metadata)
+# ─────────────────────────────────────────────────────────────────
+[[d1_databases]]
+binding = "LOVENIS_DB"
+database_name = "lovenis-db"
+database_id = "f25b5684-d65e-48ef-b523-bbae97fc364d"
 
+# ─────────────────────────────────────────────────────────────────
+# R2 Bucket — Media files (images, videos, audio, .glb)
+# ─────────────────────────────────────────────────────────────────
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "lovenis-media"
+
+# ─────────────────────────────────────────────────────────────────
+# Environment variables
+# ─────────────────────────────────────────────────────────────────
+[vars]
+R2_PUBLIC_URL = "https://pub-CHANGE_ME.r2.dev"   # ← Thay sau khi bật Public Access trên Dashboard
+MAX_FILE_SIZE = "52428800"                        # 50MB

@@ -32,7 +32,8 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.4",
     "vite": "^6.4.1",
-    "vite-plugin-vue-devtools": "^7.3.6"
+    "vite-plugin-vue-devtools": "^7.3.6",
+    "wrangler": "^4.113.0"
   },
   "overrides": {
     "three": "^0.169.0"
