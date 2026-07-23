@@ -626,8 +626,9 @@ wrangler pages deploy dist
 | Dự án | Route | Mã PIN | Màu đèn | Nguồn gốc |
 |-------|-------|--------|---------|-----------|
 | 🌸 **Hoa đào 3D** | `/blossom` | `33445` | Hồng phấn `#ffaacc` | `temp/Blossom-Animation-2026/` |
-| ❤️ **Dear Sun** | `/heart-of-love` | `52406` | Đỏ hồng `#ff6b9d` | `temp/heart_of_love_tcw/` |
-| 💜 **Love Animation** | `/love-animation` | `53014` | Tím lavender `#c084fc` | `temp/love responsive animation code/` |
+| ❤️ **Dear Sun** | `/heartoflove` | `52406` | Đỏ hồng `#ff6b9d` | `temp/heart_of_love_tcw/` |
+| 💜 **Love Animation** | `/loveanimation` | `53014` | Tím lavender `#c084fc` | `temp/love responsive animation code/` |
+| 🔥 **Particle Heart** | `/particleheart` | `52099` | Đỏ cam `#ff1744` | `Vue 3 + Three.js` |
 
 ---
 
@@ -652,13 +653,14 @@ public/projects/
 | Ô nhập | Mã PIN | Ý nghĩa (Trend mạng TQ) | Màu đèn | Chuyển đến |
 |--------|--------|-------------------------|---------|-----------|
 | Ô trên (Master) | `52014` | 我爱你一世 - Anh yêu em một đời | Cyan `#00d4ff` | `/heart-vortex` |
-| Ô dưới | `13149` | 一生一世久 - Một đời một kiếp dài lâu | Vàng ấm `#fff1b8` | `/happy-new-year` |
+| Ô dưới | `13149` | 一生一世久 - Một đời một kiếp dài lâu | Vàng ấm `#fff1b8` | `/happynewyear` |
 | Ô dưới | `33445` | 生生世世我 - Đời đời kiếp kiếp có anh | Hồng `#ffaacc` | `/blossom` |
-| Ô dưới | `52406` | 我爱死你了 - Anh yêu em chết mất | Đỏ hồng `#ff6b9d` | `/heart-of-love` |
-| Ô dưới | `53014` | 我想你一世 - Anh nhớ em một đời | Tím `#c084fc` | `/love-animation` |
+| Ô dưới | `52406` | 我爱死你了 - Anh yêu em chết mất | Đỏ hồng `#ff6b9d` | `/heartoflove` |
+| Ô dưới | `53014` | 我想你一世 - Anh nhớ em một đời | Tím `#c084fc` | `/loveanimation` |
+| Ô dưới | `52099` | 我爱你久久 - Anh yêu em mãi mãi | Đỏ cam `#ff1744` | `/particleheart` |
 | *(MemoryVault)* | `52013` | 我爱你一生 - Anh yêu em một kiếp | (Không bật) | *(Tạm khóa)* |
 
-> **Lưu ý:** Ô trên được kiểm tra trước. Nếu ô trên đúng → vào ngay, bỏ qua ô dưới. Nếu ô trên sai/để trống → kiểm tra ô dưới theo thứ tự.
+> **Lưu ý:** Ô trên được kiểm tra trước. Nếu ô trên đúng → vào ngay, bỏ qua ô dưới. Nếu ô trên sai/để trống → kiểm tra ô dưới theo thứ tự. Các ô PIN hiện chỉ chấp nhận nhập bằng số (`type="password"` kèm `inputmode="numeric"`).
 
 ---
 
@@ -696,6 +698,18 @@ const AUTH_CONFIG = {
   blossomCode: '33445',   // ← Đổi PIN Hoa đào
   heartCode: '52406',    // ← Đổi PIN Dear Sun
   loveCode: '53014',    // ← Đổi PIN Love Animation
+  particleCode: '52099', // ← Đổi PIN Particle Heart
   redirects: { ... }
+}
+```
+
+### Cách đổi màu đèn Particle Heart
+
+Mở `src/views/LoginView.vue`, tìm:
+
+```css
+/* 🔥 PARTICLE MODE — Particle Heart (đỏ cam rực rỡ) */
+.particle-mode.light-on .lamp-shade {
+  fill: #ff1744;   /* ← Đổi màu này */
 }
 ```
