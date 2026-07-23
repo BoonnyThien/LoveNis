@@ -33,7 +33,6 @@ LampNis/
 │   │   ├── SnowballGameView.vue
 │   │   ├── GiftFallView.vue
 │   │   ├── HeartVortexView.vue
-│   │   ├── TwelveView.vue
 │   │   └── HightLineText.vue
 │   ├── router/
 │   │   └── index.js         ← Đăng ký đường dẫn URL (routes)
@@ -64,8 +63,8 @@ Mở `src/views/LoginView.vue`, tìm đoạn **`AUTH_CONFIG`** (dòng ~22–29):
 
 ```javascript
 const AUTH_CONFIG = {
-  masterCode: 'NisYeu',    // ← Mã PIN ô trên (Master — ưu tiên cao nhất)
-  accessCode: '1234',      // ← Mã PIN ô dưới (Access — dự phòng)
+  masterCode: '52014',    // ← Mã PIN ô trên (Master — ưu tiên cao nhất)
+  accessCode: '13149',      // ← Mã PIN ô dưới (Access — dự phòng)
   redirects: {
     master: '/heart-vortex',    // ← Trang khi dùng Master PIN
     access: '/happy-new-year'   // ← Trang khi dùng Access PIN
@@ -75,8 +74,8 @@ const AUTH_CONFIG = {
 
 | Muốn thay | Chỉnh chỗ nào |
 |-----------|---------------|
-| Mã PIN ô trên | `masterCode: 'NisYeu'` → đổi `'NisYeu'` |
-| Mã PIN ô dưới | `accessCode: '1234'` → đổi `'1234'` |
+| Mã PIN ô trên | `masterCode: '52014'` → đổi `'52014'` |
+| Mã PIN ô dưới | `accessCode: '13149'` → đổi `'13149'` |
 | Trang sau Master | `master: '/heart-vortex'` → đổi route |
 | Trang sau Access | `access: '/happy-new-year'` → đổi route |
 
@@ -124,8 +123,8 @@ Màu đèn thay đổi qua CSS class. Tìm trong `<style scoped>` của `LoginVi
 **Bước 1**: Thêm vào `AUTH_CONFIG`:
 ```javascript
 const AUTH_CONFIG = {
-  masterCode: 'NisYeu',
-  accessCode: '1234',
+  masterCode: '52014',
+  accessCode: '13149',
   vipCode: 'MySecret',        // ← PIN thứ 3
   redirects: {
     master: '/heart-vortex',
@@ -397,7 +396,6 @@ import LoginView from '../views/LoginView.vue'
 import HappyNewYearView from '../views/HappyNewYearView.vue'
 import WorldView from '../views/WorldView.vue'
 import OpenGiftView from '../views/OpenGiftView.vue'
-import TwelveView from '../views/TwelveView.vue'
 import HeartVortexView from '../views/HeartVortexView.vue'
 
 const router = createRouter({
@@ -408,7 +406,6 @@ const router = createRouter({
     { path: '/happy-new-year',name: 'happy-new-year',component: HappyNewYearView },
     { path: '/world',         name: 'world',         component: WorldView },
     { path: '/open-gift',     name: 'open-gift',     component: OpenGiftView },
-    { path: '/twelve',        name: 'twelve',        component: TwelveView },
     { path: '/heart-vortex',  name: 'heart-vortex',  component: HeartVortexView },
     // Thêm routes mới bên dưới đây:
   ]
@@ -446,7 +443,6 @@ router.back()                       // Quay lại trang trước
 | `/happy-new-year` | `happy-new-year` | `HappyNewYearView.vue` |
 | `/world` | `world` | `WorldView.vue` |
 | `/open-gift` | `open-gift` | `OpenGiftView.vue` |
-| `/twelve` | `twelve` | `TwelveView.vue` |
 | `/heart-vortex` | `heart-vortex` | `HeartVortexView.vue` |
 
 ---
@@ -629,9 +625,9 @@ wrangler pages deploy dist
 
 | Dự án | Route | Mã PIN | Màu đèn | Nguồn gốc |
 |-------|-------|--------|---------|-----------|
-| 🌸 **Hoa đào 3D** | `/blossom` | `HoaDao` | Hồng phấn `#ffaacc` | `temp/Blossom-Animation-2026/` |
-| ❤️ **Dear Sun** | `/heart-of-love` | `DearSun` | Đỏ hồng `#ff6b9d` | `temp/heart_of_love_tcw/` |
-| 💜 **Love Animation** | `/love-animation` | `ILoveYou` | Tím lavender `#c084fc` | `temp/love responsive animation code/` |
+| 🌸 **Hoa đào 3D** | `/blossom` | `33445` | Hồng phấn `#ffaacc` | `temp/Blossom-Animation-2026/` |
+| ❤️ **Dear Sun** | `/heart-of-love` | `52406` | Đỏ hồng `#ff6b9d` | `temp/heart_of_love_tcw/` |
+| 💜 **Love Animation** | `/love-animation` | `53014` | Tím lavender `#c084fc` | `temp/love responsive animation code/` |
 
 ---
 
@@ -653,13 +649,14 @@ public/projects/
 
 ### Bảng PIN đầy đủ hiện tại
 
-| Ô nhập | Mã PIN | Màu đèn | Chuyển đến |
-|--------|--------|---------|-----------|
-| Ô trên (Master) | `NisYeu` | Cyan `#00d4ff` | `/heart-vortex` |
-| Ô dưới | `1234` | Vàng ấm `#fff1b8` | `/happy-new-year` |
-| Ô dưới | `HoaDao` | Hồng `#ffaacc` | `/blossom` |
-| Ô dưới | `DearSun` | Đỏ hồng `#ff6b9d` | `/heart-of-love` |
-| Ô dưới | `ILoveYou` | Tím `#c084fc` | `/love-animation` |
+| Ô nhập | Mã PIN | Ý nghĩa (Trend mạng TQ) | Màu đèn | Chuyển đến |
+|--------|--------|-------------------------|---------|-----------|
+| Ô trên (Master) | `52014` | 我爱你一世 - Anh yêu em một đời | Cyan `#00d4ff` | `/heart-vortex` |
+| Ô dưới | `13149` | 一生一世久 - Một đời một kiếp dài lâu | Vàng ấm `#fff1b8` | `/happy-new-year` |
+| Ô dưới | `33445` | 生生世世我 - Đời đời kiếp kiếp có anh | Hồng `#ffaacc` | `/blossom` |
+| Ô dưới | `52406` | 我爱死你了 - Anh yêu em chết mất | Đỏ hồng `#ff6b9d` | `/heart-of-love` |
+| Ô dưới | `53014` | 我想你一世 - Anh nhớ em một đời | Tím `#c084fc` | `/love-animation` |
+| *(MemoryVault)* | `52013` | 我爱你一生 - Anh yêu em một kiếp | (Không bật) | *(Tạm khóa)* |
 
 > **Lưu ý:** Ô trên được kiểm tra trước. Nếu ô trên đúng → vào ngay, bỏ qua ô dưới. Nếu ô trên sai/để trống → kiểm tra ô dưới theo thứ tự.
 
@@ -694,11 +691,11 @@ Mở `src/views/LoginView.vue`, tìm `AUTH_CONFIG` (dòng ~22):
 
 ```javascript
 const AUTH_CONFIG = {
-  masterCode: 'NisYeu',
-  accessCode: '1234',
-  blossomCode: 'HoaDao',   // ← Đổi PIN Hoa đào
-  heartCode: 'DearSun',    // ← Đổi PIN Dear Sun
-  loveCode: 'ILoveYou',    // ← Đổi PIN Love Animation
+  masterCode: '52014',
+  accessCode: '13149',
+  blossomCode: '33445',   // ← Đổi PIN Hoa đào
+  heartCode: '52406',    // ← Đổi PIN Dear Sun
+  loveCode: '53014',    // ← Đổi PIN Love Animation
   redirects: { ... }
 }
 ```

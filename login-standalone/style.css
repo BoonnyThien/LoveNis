@@ -1,8 +1,8 @@
 /* --- STYLE.CSS: LAYOUT, VISUAL SYSTEM, GLASSMORPHISM & AUTH FEEDBACK --- */
 
 :root {
-  --bg-dark: #070709;
-  --bg-dark-illuminated: #0f0f13;
+  --bg-dark: #020617;
+  --bg-dark-illuminated: #0F172A;
   --lamp-off: #32323a;
   --lamp-on: #fff1b8;
   --accent-color: #ff9f1c;
@@ -100,8 +100,8 @@ body.is-illuminated {
   transform: translate(-50%, -50%);
   width: 120vw;
   height: 120vw;
-  background: radial-gradient(circle, rgba(255, 235, 150, 0.18) 0%, rgba(255, 235, 150, 0.05) 50%, rgba(0, 0, 0, 0) 70%);
-  filter: blur(65px);
+  background: radial-gradient(circle, rgba(253, 224, 71, 0.25) 0%, rgba(253, 224, 71, 0.05) 50%, transparent 70%);
+  filter: blur(70px);
   opacity: 0;
   pointer-events: none;
   z-index: -2;
@@ -248,47 +248,45 @@ body.is-illuminated .form-section {
   opacity: 1;
   transform: translateY(0);
   pointer-events: all;
-  background: rgba(255, 255, 255, 0.045);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.15),
-    inset 0 -1px 3px rgba(0, 0, 0, 0.4),
-    0 24px 50px rgba(0, 0, 0, 0.45),
-    0 0 80px rgba(255, 235, 150, 0.05);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 /* Tăng cường độ tương phản text khi đèn bật */
 body.is-illuminated .form-title {
   background: none;
   -webkit-text-fill-color: initial;
-  color: #1e1e24;
+  color: #fffbeb;
+  text-shadow: 0 0 10px rgba(255, 235, 150, 0.5);
 }
 
 body.is-illuminated .form-input {
-  color: #1e1e24;
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(0, 0, 0, 0.15);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  color: #E2E8F0;
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  box-shadow: none;
 }
 
 body.is-illuminated .form-input::placeholder {
-  color: rgba(0, 0, 0, 0.5);
+  color: #E2E8F0;
+  opacity: 0.7;
 }
 
 body.is-illuminated .input-icon {
-  fill: #475569;
+  fill: #E2E8F0;
 }
 
 body.is-illuminated .form-input:focus {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 159, 28, 0.6);
-  box-shadow: 0 0 0 4px rgba(255, 159, 28, 0.15);
+  background: rgba(0, 0, 0, 0.4);
+  outline: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
 body.is-illuminated .form-input:focus + .input-icon {
-  fill: rgba(255, 159, 28, 0.9);
+  fill: #fffbeb;
 }
 
 .form-title {

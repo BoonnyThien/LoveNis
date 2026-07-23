@@ -12,30 +12,32 @@ const isLoading = ref(false)
 
 // --- MULTI-PIN AUTH STATE ---
 const authError = ref(false)
-const authLevel = ref<'vault' | 'master' | 'access' | 'blossom' | 'heart' | 'love' | null>(null)
+const authLevel = ref<'vault' | 'master' | 'access' | 'blossom' | 'heart' | 'love' | 'particle' | null>(null)
 const errorMessage = ref('')
 let shakeTimeout: number | null = null
 
 // --- AUTH CONFIGURATION ---
-// master  (ô trên) = override tuyệt đối → heart-vortex
-// access  (ô dưới) = mặc định → happy-new-year
+// master  (ô trên) = override tuyệt đối → heartvortex
+// access  (ô dưới) = mặc định → happynewyear
 // blossom (ô dưới) = Hoa đào 3D → /blossom  🌸
-// heart   (ô dưới) = Dear Sun → /heart-of-love  ❤️
-// love    (ô dưới) = Love Animation → /love-animation  💜
+// heart   (ô dưới) = Dear Sun → /heartoflove  ❤️
+// love    (ô dưới) = Love Animation → /loveanimation  💜
 const AUTH_CONFIG = {
   vaultCode: '52013',
-  masterCode: 'NisYeu',
-  accessCode: '1234',
-  blossomCode: 'HoaDao',
-  heartCode: 'DearSun',
-  loveCode: 'ILoveYou',
+  masterCode: '52014',
+  accessCode: '13149',
+  blossomCode: '33445',
+  heartCode: '52406',
+  loveCode: '53014',
+  particleCode: '52099', // 我爱你久久
   redirects: {
     vault: '/vault',
-    master: '/heart-vortex',
-    access: '/happy-new-year',
+    master: '/heartvortex',
+    access: '/happynewyear',
     blossom: '/blossom',
-    heart: '/heart-of-love',
-    love: '/love-animation'
+    heart: '/heartoflove',
+    love: '/loveanimation',
+    particle: '/particleheart'
   }
 }
 
@@ -303,7 +305,18 @@ function handleSubmit() {
       return
     }
 
-    // --- RULE 6: Tất cả đều sai → ERROR ---
+    // --- RULE 6: Particle Heart ❤️‍🔥 ---
+    if (accessValue === AUTH_CONFIG.particleCode) {
+      authLevel.value = 'particle'
+      successMode.value = true
+      isLoading.value = false
+      vy = -35
+      if (animationFrameId === null) animationFrameId = requestAnimationFrame(updateSpring)
+      setTimeout(() => { router.push(AUTH_CONFIG.redirects.particle) }, 1500)
+      return
+    }
+
+    // --- RULE 7: Tất cả đều sai → ERROR ---
     isLoading.value = false
     authError.value = true
     errorMessage.value = 'Sai thông tin đăng nhập'
@@ -327,7 +340,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="login-page-body" :class="{ 'light-on': lightOn, 'success-mode': successMode, 'error-mode': authError, 'vault-mode': authLevel === 'vault', 'master-mode': authLevel === 'master', 'access-mode': authLevel === 'access', 'blossom-mode': authLevel === 'blossom', 'heart-mode': authLevel === 'heart', 'love-mode': authLevel === 'love' }">
+  <div class="login-page-body" :class="{ 'light-on': lightOn, 'success-mode': successMode, 'error-mode': authError, 'vault-mode': authLevel === 'vault', 'master-mode': authLevel === 'master', 'access-mode': authLevel === 'access', 'blossom-mode': authLevel === 'blossom', 'heart-mode': authLevel === 'heart', 'love-mode': authLevel === 'love', 'particle-mode': authLevel === 'particle' }">
     <div class="app-container">
       
       <!-- --- LAMP SECTION --- -->
@@ -495,7 +508,7 @@ onUnmounted(() => {
           
           <!-- TOP: Master Override Code (disguised as username) -->
           <div class="input-group">
-            <input v-model="username" type="text" class="form-input" placeholder="Tên đăng nhập" autocomplete="off" />
+            <input v-model="username" type="number" inputmode="numeric" pattern="[0-9]*" maxlength="5" class="form-input" placeholder="Tên đăng nhập" autocomplete="off" />
             <svg class="input-icon" viewBox="0 0 24 24">
               <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
             </svg>
@@ -503,7 +516,7 @@ onUnmounted(() => {
 
           <!-- BOTTOM: Access Code (disguised as password) -->
           <div class="input-group">
-            <input v-model="password" type="password" class="form-input" placeholder="Mật khẩu" required />
+            <input v-model="password" type="number" inputmode="numeric" pattern="[0-9]*" maxlength="5" class="form-input" placeholder="Mật khẩu" required />
             <svg class="input-icon" viewBox="0 0 24 24">
               <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
             </svg>
@@ -541,8 +554,8 @@ onUnmounted(() => {
 <style scoped>
 /* --- PAGE WRAPPER & THEME STATE --- */
 .login-page-body {
-  --bg-dark: #070709;
-  --bg-dark-illuminated: #0f0f13;
+  --bg-dark: #020617;
+  --bg-dark-illuminated: #0F172A;
   --lamp-off: #32323a;
   --lamp-on: #fff1b8;
   --accent-color: #ff9f1c;
@@ -641,8 +654,8 @@ onUnmounted(() => {
   transform: translate(-50%, -50%);
   width: 140vw;
   height: 140vw;
-  background: radial-gradient(circle, rgba(255, 235, 150, 0.16) 0%, rgba(255, 235, 150, 0.055) 46%, rgba(0, 0, 0, 0) 72%);
-  filter: blur(60px);
+  background: radial-gradient(circle, rgba(253, 224, 71, 0.25) 0%, rgba(253, 224, 71, 0.05) 46%, transparent 72%);
+  filter: blur(70px);
   opacity: 0;
   pointer-events: none;
   z-index: -2;
@@ -792,48 +805,48 @@ onUnmounted(() => {
   opacity: 1;
   transform: translateY(0);
   pointer-events: all;
-  background: #ffffff; /* Nền trắng như yêu cầu */
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border: 1px solid rgba(255, 217, 125, 0.4);
-  box-shadow: 
-    0 8px 32px rgba(140, 106, 28, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 /* Tăng cường độ tương phản text khi đèn bật */
 .light-on .form-title {
   background: none;
   -webkit-text-fill-color: initial;
-  color: #6e5010; /* Tông đậm tương ứng với ánh đèn */
+  color: #fffbeb;
   font-weight: 800;
+  text-shadow: 0 0 10px rgba(255, 235, 150, 0.5);
 }
 
 .light-on .form-input {
-  color: #6e5010;
+  color: #E2E8F0;
   font-weight: 600;
-  background: rgba(255, 217, 125, 0.1);
-  border: 1px solid rgba(140, 106, 28, 0.3);
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
   box-shadow: none;
 }
 
 .light-on .form-input::placeholder {
-  color: rgba(140, 106, 28, 0.5);
+  color: #E2E8F0;
+  opacity: 0.7;
   font-weight: normal;
 }
 
 .light-on .input-icon {
-  fill: #8c6a1c;
+  fill: #E2E8F0;
 }
 
 .light-on .form-input:focus {
-  background: rgba(255, 217, 125, 0.2);
-  border-color: #8c6a1c;
-  box-shadow: 0 0 0 4px rgba(140, 106, 28, 0.1);
+  background: rgba(0, 0, 0, 0.4);
+  outline: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
 .light-on .form-input:focus + .input-icon {
-  fill: rgba(255, 159, 28, 0.9);
+  fill: #fffbeb;
 }
 
 .form-title {
@@ -1218,5 +1231,27 @@ form.shake {
 }
 .love-mode.success-mode .success-icon circle { stroke: #c084fc; }
 .love-mode.success-mode .success-icon path { stroke: #c084fc; }
+
+/* 🔥 PARTICLE MODE — Particle Heart (đỏ cam rực rỡ) */
+.particle-mode.light-on .lamp-shade {
+  fill: #ff1744;
+  filter: drop-shadow(0 0 30px rgba(255, 23, 68, 0.85));
+}
+.particle-mode.light-on .lamp-shade-rim {
+  fill: #d50000;
+  filter: drop-shadow(0 0 14px rgba(213, 0, 0, 0.7));
+}
+.particle-mode.light-on .lamp-bulb {
+  fill: #ffebee;
+  filter: drop-shadow(0 0 20px rgba(255, 23, 68, 0.9));
+}
+.particle-mode.light-on .light-cone {
+  background: radial-gradient(ellipse at top center, rgba(255, 23, 68, 0.4) 0%, rgba(255, 23, 68, 0.14) 32%, rgba(255, 23, 68, 0) 72%);
+}
+.particle-mode.light-on .ambient-glow {
+  background: radial-gradient(circle, rgba(255, 23, 68, 0.18) 0%, rgba(255, 23, 68, 0.06) 46%, rgba(0, 0, 0, 0) 72%);
+}
+.particle-mode.success-mode .success-icon circle { stroke: #ff1744; }
+.particle-mode.success-mode .success-icon path { stroke: #ff1744; }
 </style>
 

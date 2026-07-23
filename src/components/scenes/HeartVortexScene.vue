@@ -2,6 +2,9 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 
 const props = defineProps({
   particleCount: {
@@ -24,6 +27,7 @@ let controls: OrbitControls
 let material: THREE.ShaderMaterial
 let geometry: THREE.BufferGeometry
 let particleGroup: THREE.Group
+let composer: EffectComposer
 
 function initThree() {
   if (!webglCanvas.value) return
@@ -76,6 +80,17 @@ function initThree() {
   particleGroup.position.y = 0.5
   scene.add(particleGroup)
 
+  // Setup Post-processing (Bloom) - Đã căn chỉnh lại cho hài hòa, bớt lóa
+  const renderScene = new RenderPass(scene, camera)
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2(width, height), 1.5, 0.4, 0.85)
+  bloomPass.threshold = 0.15
+  bloomPass.strength = 0.6
+  bloomPass.radius = 0.3
+
+  composer = new EffectComposer(renderer)
+  composer.addPass(renderScene)
+  composer.addPass(bloomPass)
+
   window.addEventListener('resize', onResize)
 }
 
@@ -94,15 +109,19 @@ function buildParticles() {
   const tempColor  = new THREE.Color()
 
   for (let i = 0; i < count; i++) {
-    // 1. Công thức Parametric Trái Tim chuẩn
+    // 1. Công thức Parametric Trái Tim chuẩn (Thêm độ dày phân bố để hạt trải đều hơn)
     const t  = Math.random() * Math.PI * 2
-    const hx = 16 * Math.pow(Math.sin(t), 3) * 0.1
-    const hy = (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) * 0.1
+    
+    // Thêm hệ số độ dày (thickness) để dàn đều hạt thành dải volume, thay vì dính chặt vào 1 đường mảnh gây lóa
+    const thickness = 0.75 + Math.random() * 0.5 
+    
+    const hx = 16 * Math.pow(Math.sin(t), 3) * 0.1 * thickness
+    const hy = (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) * 0.1 * thickness
 
-    // 2. Nhiễu CỰC NHỎ — chỉ đủ để có độ xốp, không làm mờ rãnh chẻ
-    const nx = (Math.random() - 0.5) * 0.1
-    const ny = (Math.random() - 0.5) * 0.1
-    const nz = (Math.random() - 0.5) * 0.1
+    // 2. Nhiễu đa chiều phân bổ Z sâu hơn để hạt thành một khối 3D mềm mại
+    const nx = (Math.random() - 0.5) * 0.25
+    const ny = (Math.random() - 0.5) * 0.25
+    const nz = (Math.random() - 0.5) * 0.8
 
     positions[i*3]     = hx + nx
     positions[i*3 + 1] = hy + ny
@@ -191,7 +210,8 @@ function buildParticles() {
         // Glow: trắng ở tâm, hồng ở viền
         vec3 glowCol = mix(vec3(1.0, 0.9, 0.97), vColor, d * 2.0);
 
-        gl_FragColor = vec4(glowCol, shapeAlpha * lifeAlpha * 0.75);
+        // Giảm Alpha xuống 0.35 để kết hợp AdditiveBlending không bị lóa trắng xóa
+        gl_FragColor = vec4(glowCol, shapeAlpha * lifeAlpha * 0.35);
       }
     `,
     transparent: true,
@@ -217,7 +237,11 @@ function animate() {
   particleGroup.rotation.y = elapsed * 0.2 // Xoay tổng thể cả cụm chậm rãi
 
   if (controls) controls.update()
-  renderer.render(scene, camera)
+  if (composer) {
+    composer.render()
+  } else {
+    renderer.render(scene, camera)
+  }
 }
 
 function onResize() {
@@ -227,6 +251,9 @@ function onResize() {
   camera.aspect = width / height
   camera.updateProjectionMatrix()
   renderer.setSize(width, height)
+  if (composer) {
+    composer.setSize(width, height)
+  }
 }
 
 onMounted(() => {

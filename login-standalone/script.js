@@ -51,10 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const AUTH_CONFIG = {
     // Master Override Code (Top input — highest priority)
     // When this is correct, the bottom input is completely ignored
-    masterCode: 'NisYeu',
+    masterCode: '52014',
 
     // Standard Access Code (Bottom input — grants access when master is wrong/empty)
-    accessCode: '1234',
+    accessCode: '13149',
 
     // Redirect targets for each access level
     redirects: {

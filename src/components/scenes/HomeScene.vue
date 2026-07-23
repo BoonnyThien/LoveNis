@@ -105,7 +105,7 @@ const isHovered = ref(false)
     
     <TresGridHelper :args="[50, 50]" :position="[0, -1.99, 0]" />
 
-    <TresAmbientLight :intensity="1" />
-    <TresPointLight :position="[10, 10, 10]" :intensity="2" />
+    <TresAmbientLight :intensity="0.3" />
+    <TresPointLight :position="[10, 10, 10]" :intensity="1.0" />
   </TresGroup>
 </template>
