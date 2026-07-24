@@ -676,7 +676,13 @@ public/projects/
 | Ô dưới | `52406` | 我爱死你了 - Anh yêu em chết mất | Đỏ hồng `#ff6b9d` | `/heartoflove` |
 | Ô dưới | `53014` | 我想你一世 - Anh nhớ em một đời | Tím `#c084fc` | `/loveanimation` |
 | Ô dưới | `52099` | 我爱你久久 - Anh yêu em mãi mãi | Đỏ cam `#ff1744` | `/particleheart` |
-| *(MemoryVault)* | `52013` | 我爱你一生 - Anh yêu em một kiếp | (Không bật) | *(Tạm khóa)* |
+| Ô dưới | `20001` | World | Xanh biển `#3498db` | `/world` |
+| Ô dưới | `20002` | Open Gift | Cam `#e67e22` | `/opengift` |
+| Ô dưới | `20003` | Gift Fall | Vàng `#f1c40f` | `/giftfall` |
+| Ô dưới | `20004` | Hightline Text | Xanh lá `#2ecc71` | `/hightlinetext` |
+| Ô dưới | `20005` | Snowball Game | Tím `#9b59b6` | `/snowballgame` |
+| Ô dưới | `20006` | Snowball | Trắng băng `#ecf0f1` | `/snowball` |
+| *(MemoryVault)* | `52013` | 我爱你一生 - Anh yêu em một kiếp | (Không bật) | `/vault` |
 
 > **Lưu ý:** Ô trên được kiểm tra trước. Nếu ô trên đúng → vào ngay, bỏ qua ô dưới. Nếu ô trên sai/để trống → kiểm tra ô dưới theo thứ tự. Các ô PIN hiện chỉ chấp nhận nhập bằng số (`type="password"` kèm `inputmode="numeric"`).
 
@@ -717,6 +723,12 @@ const AUTH_CONFIG = {
   heartCode: '52406',    // ← Đổi PIN Dear Sun
   loveCode: '53014',    // ← Đổi PIN Love Animation
   particleCode: '52099', // ← Đổi PIN Particle Heart
+  worldCode: '20001',    // ← Đổi PIN World
+  opengiftCode: '20002', // ← Đổi PIN Open Gift
+  giftfallCode: '20003', // ← Đổi PIN Gift Fall
+  hightlineCode: '20004',// ← Đổi PIN Hightline
+  snowballgameCode: '20005', // ← Đổi PIN Snowball Game
+  snowballCode: '20006', // ← Đổi PIN Snowball
   redirects: { ... }
 }
 ```

@@ -14,7 +14,7 @@ const showPassword = ref(false)
 
 // --- MULTI-PIN AUTH STATE ---
 const authError = ref(false)
-const authLevel = ref<'vault' | 'master' | 'access' | 'blossom' | 'heart' | 'love' | 'particle' | null>(null)
+const authLevel = ref<'vault' | 'master' | 'access' | 'blossom' | 'heart' | 'love' | 'particle' | 'world' | 'opengift' | 'giftfall' | 'hightline' | 'snowballgame' | 'snowball' | null>(null)
 const errorMessage = ref('')
 let shakeTimeout: number | null = null
 
@@ -32,6 +32,12 @@ const AUTH_CONFIG = {
   heartCode: '52406',
   loveCode: '53014',
   particleCode: '52099', // 我爱你久久
+  worldCode: '20001',
+  opengiftCode: '20002',
+  giftfallCode: '20003',
+  hightlineCode: '20004',
+  snowballgameCode: '20005',
+  snowballCode: '20006',
   redirects: {
     vault: '/vault',
     master: '/heartvortex',
@@ -39,7 +45,13 @@ const AUTH_CONFIG = {
     blossom: '/blossom',
     heart: '/heartoflove',
     love: '/loveanimation',
-    particle: '/particleheart'
+    particle: '/particleheart',
+    world: '/world',
+    opengift: '/opengift',
+    giftfall: '/giftfall',
+    hightline: '/hightlinetext',
+    snowballgame: '/snowballgame',
+    snowball: '/snowball'
   }
 }
 
@@ -318,6 +330,28 @@ function handleSubmit() {
       return
     }
 
+    // --- RULE 7: EXTRA ROUTES ---
+    const extraRoutes = [
+      { code: AUTH_CONFIG.worldCode, level: 'world', path: AUTH_CONFIG.redirects.world },
+      { code: AUTH_CONFIG.opengiftCode, level: 'opengift', path: AUTH_CONFIG.redirects.opengift },
+      { code: AUTH_CONFIG.giftfallCode, level: 'giftfall', path: AUTH_CONFIG.redirects.giftfall },
+      { code: AUTH_CONFIG.hightlineCode, level: 'hightline', path: AUTH_CONFIG.redirects.hightline },
+      { code: AUTH_CONFIG.snowballgameCode, level: 'snowballgame', path: AUTH_CONFIG.redirects.snowballgame },
+      { code: AUTH_CONFIG.snowballCode, level: 'snowball', path: AUTH_CONFIG.redirects.snowball }
+    ]
+
+    for (const route of extraRoutes) {
+      if (accessValue === route.code) {
+        authLevel.value = route.level as any
+        successMode.value = true
+        isLoading.value = false
+        vy = -35
+        if (animationFrameId === null) animationFrameId = requestAnimationFrame(updateSpring)
+        setTimeout(() => { router.push(route.path) }, 1500)
+        return
+      }
+    }
+
     // --- RULE 7: Tất cả đều sai → ERROR ---
     isLoading.value = false
     authError.value = true
@@ -342,7 +376,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="login-page-body" :class="{ 'light-on': lightOn, 'success-mode': successMode, 'error-mode': authError, 'vault-mode': authLevel === 'vault', 'master-mode': authLevel === 'master', 'access-mode': authLevel === 'access', 'blossom-mode': authLevel === 'blossom', 'heart-mode': authLevel === 'heart', 'love-mode': authLevel === 'love', 'particle-mode': authLevel === 'particle' }">
+  <div class="login-page-body" :class="{ 'light-on': lightOn, 'success-mode': successMode, 'error-mode': authError, 'vault-mode': authLevel === 'vault', 'master-mode': authLevel === 'master', 'access-mode': authLevel === 'access', 'blossom-mode': authLevel === 'blossom', 'heart-mode': authLevel === 'heart', 'love-mode': authLevel === 'love', 'particle-mode': authLevel === 'particle', 'world-mode': authLevel === 'world', 'opengift-mode': authLevel === 'opengift', 'giftfall-mode': authLevel === 'giftfall', 'hightline-mode': authLevel === 'hightline', 'snowballgame-mode': authLevel === 'snowballgame', 'snowball-mode': authLevel === 'snowball' }">
     <div class="app-container">
       
       <!-- --- LAMP SECTION --- -->
@@ -1291,5 +1325,13 @@ form.shake {
 }
 .particle-mode.success-mode .success-icon circle { stroke: #ff1744; }
 .particle-mode.success-mode .success-icon path { stroke: #ff1744; }
+
+/* 🌍 EXTRA MODES: world, opengift, giftfall, hightline, snowballgame, snowball */
+.world-mode.light-on .lamp-shade { fill: #3498db; }
+.opengift-mode.light-on .lamp-shade { fill: #e67e22; }
+.giftfall-mode.light-on .lamp-shade { fill: #f1c40f; }
+.hightline-mode.light-on .lamp-shade { fill: #2ecc71; }
+.snowballgame-mode.light-on .lamp-shade { fill: #9b59b6; }
+.snowball-mode.light-on .lamp-shade { fill: #ecf0f1; }
 </style>
 
